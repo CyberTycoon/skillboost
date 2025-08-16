@@ -25,7 +25,7 @@ const Features = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
-                            Why Choose SkillBoost?
+                            Why Choose AfroTask?
                         </h2>
                         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                             Our verification-first approach ensures you work with the best professionals

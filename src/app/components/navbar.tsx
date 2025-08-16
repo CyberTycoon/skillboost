@@ -1,6 +1,7 @@
 'use client'
 import { LogOut, Menu, Search, User, X } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import React, { useState } from 'react'
 import { useUser } from '../contexts/UserContext'
 import { useRouter } from 'next/navigation'
@@ -11,6 +12,7 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import Logo from './logo'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,14 +27,11 @@ const Navbar = () => {
     return (
         <nav className="flex items-center justify-between p-4 bg-white shadow-md relative">
             <Link href="/" className="flex items-center">
-                <div className="bg-green-500 text-white px-2 rounded">
-                    <span className="font-bold text-lg">SB</span>
+                <div className="rounded">
+                    <Logo />
                 </div>
-                <span className="text-xl bg-gradient-to-r from-green-800 to-green-200 bg-clip-text text-transparent font-bold ml-2 hidden md:block">
-                    SKILLBOOST
-                </span>
             </Link>
-            <div className="relative flex-grow mx-4 md:mx-8">
+            <div className="relative mx-4 md:mx-8 w-140">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Search className="text-gray-400" />
                 </div>
@@ -59,9 +58,9 @@ const Navbar = () => {
                         </Link>
                         <Link
                             href="/signup"
-                            className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors shadow-md"
+                            className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors shadow-md shadow-green-300"
                         >
-                            Join
+                            Join Now
                         </Link>
                     </>
                 ) : (
@@ -112,9 +111,9 @@ const Navbar = () => {
                     } w-64 md:hidden`}
             >
                 <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-green-800 to-green-200 bg-clip-text text-transparent">
-                        SB
-                    </h2>
+                    <div className="rounded">
+                        <Logo />
+                    </div>
                     <button onClick={() => setIsMenuOpen(false)} className="focus:outline-none">
                         <X className="h-6 w-6" />
                     </button>

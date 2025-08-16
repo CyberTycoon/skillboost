@@ -1,18 +1,15 @@
-import Link from 'next/link';
+'use client'
+import Link from 'next/link'
 import { CheckCircle, Clock, AlertCircle, Plus, Eye, Briefcase, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { useUser } from '../contexts/UserContext'
+import { useUI } from '../contexts/UIContext'
 
 const Dashboard = () => {
-  const user = {
-    id: '123',
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'freelancer',
-    status: 'approved'
-  }
-  const showRestrictedModal = {}
+  const { user } = useUser()
+  const { showRestrictedModal } = useUI()
 
   const getStatusIcon = () => {
     switch (user?.status) {
@@ -133,9 +130,9 @@ const Dashboard = () => {
                   Complete your verification to access all features.
                 </p>
                 <Link href="/verification">
-                  <button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  <Button size="sm" className="cursor-pointer bg-blue-600 hover:bg-blue-700">
                     Complete Verification
-                  </button>
+                  </Button>
                 </Link>
               </div>
             )}
@@ -176,14 +173,14 @@ const Dashboard = () => {
                 <>
                   {user?.status === 'approved' ? (
                     <Link href="/offer-service">
-                      <Button className="w-full cursor-pointer mb-4 justify-start bg-green-500 hover:bg-green-600 rounded-md">
+                      <Button className="w-full justify-start bg-green-500 hover:bg-green-600">
                         <Plus className="w-4 h-4 mr-2" />
                         Create New Service
                       </Button>
                     </Link>
                   ) : (
                     <Button
-                      className="w-full justify-start cursor-pointer mb-4 bg-green-500 hover:bg-green-600"
+                      className="w-full justify-start bg-green-500 hover:bg-green-600"
                       onClick={() => handleRestrictedAction('creating services')}
                     >
                       <Plus className="w-4 h-4 mr-2" />
@@ -191,7 +188,7 @@ const Dashboard = () => {
                     </Button>
                   )}
                   <Link href="/explore">
-                    <Button variant="outline" className="w-full cursor-pointer justify-start">
+                    <Button variant="outline" className="w-full justify-start">
                       <Eye className="w-4 h-4 mr-2" />
                       Browse Available Jobs
                     </Button>
@@ -201,25 +198,25 @@ const Dashboard = () => {
                 <>
                   {user?.status === 'approved' ? (
                     <Link href="/post-job">
-                      <button className="w-full justify-start bg-green-500 hover:bg-green-600">
+                      <Button className="w-full justify-start bg-green-500 hover:bg-green-600">
                         <Plus className="w-4 h-4 mr-2" />
                         Post New Job
-                      </button>
+                      </Button>
                     </Link>
                   ) : (
-                    <button
+                    <Button
                       className="w-full justify-start bg-green-500 hover:bg-green-600"
                       onClick={() => handleRestrictedAction('posting jobs')}
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Post New Job
-                    </button>
+                    </Button>
                   )}
                   <Link href="/explore">
-                    <button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start">
                       <Users className="w-4 h-4 mr-2" />
                       Browse Freelancers
-                    </button>
+                    </Button>
                   </Link>
                 </>
               )}
@@ -276,4 +273,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard
-

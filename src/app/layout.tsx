@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Skill Boost",
+  title: "AfroTask",
   description: "Built By Silas Okanlawon",
 };
 

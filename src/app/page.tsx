@@ -78,7 +78,7 @@ export default function Home() {
             Ready to get started?
           </h2>
           <p className="text-xl text-green-100 mb-8">
-            Join thousands of verified professionals and trusted clients on TrustWork
+            Join thousands of verified professionals and trusted clients on AfroTask
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useUser } from '../contexts/UserContext'
+import Logo from '../components/logo'
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -82,10 +83,7 @@ const SignIn = () => {
             <div className="max-w-md w-full">
                 <div className="text-center mb-8">
                     <Link href="/" className="flex items-center justify-center space-x-2 mb-6">
-                        <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-xl">SB</span>
-                        </div>
-                        <span className="text-2xl font-bold text-gray-900">SkillBoost</span>
+                        <Logo forceText={true} />
                     </Link>
                     <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
                     <p className="mt-2 text-gray-600">Sign in to your account</p>

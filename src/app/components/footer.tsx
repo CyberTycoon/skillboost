@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Logo from './logo';
 
 const Footer = () => {
     return (
@@ -8,10 +9,7 @@ const Footer = () => {
                     {/* Company */}
                     <div>
                         <div className="flex items-center space-x-2 mb-4">
-                            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">T</span>
-                            </div>
-                            <span className="text-xl font-bold">SkillBoost</span>
+                            <Logo forceText={true} />
                         </div>
                         <p className="text-gray-400 text-sm">
                             The trust-first freelance marketplace connecting verified professionals with quality clients.
@@ -54,7 +52,7 @@ const Footer = () => {
 
                 <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
                     <p className="text-gray-400 text-sm">
-                        © 2025 SkillBoost. All rights reserved.
+                        © 2025 AfroTask. All rights reserved.
                     </p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <span className="text-gray-400 text-sm">Trusted by:</span>

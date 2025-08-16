@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 interface UIContextType {
     isRestrictedModalOpen: boolean;
@@ -18,7 +18,7 @@ export const useUI = () => {
     return context
 }
 
-export const UIProvider = ({ children }: { children: ReactNode }) => {
+export const UIProvider = ({ children }: { children: React.ReactNode }) => {
     const [isRestrictedModalOpen, setIsRestrictedModalOpen] = useState(false)
     const [restrictedFeature, setRestrictedFeature] = useState('')
 
