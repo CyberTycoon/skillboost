@@ -1,6 +1,6 @@
 'use client'
 
-import { Briefcase, Clapperboard, FileText, Laptop, Megaphone, Palette } from 'lucide-react';
+import { Briefcase, Clapperboard, FileText, Laptop, Link, Megaphone, Palette } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 
 const PopularServices = () => {
@@ -127,13 +127,13 @@ const PopularServices = () => {
                                             {service.description}
                                         </p>
 
-                                        <button className={`inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r ${service.color} text-white text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 group-hover:translate-x-1`}>
+                                        <Link href='/explore' className={`inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r ${service.color} text-white text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 group-hover:translate-x-1`}>
                                             <span className="hidden sm:inline">Explore Services</span>
                                             <span className="sm:hidden">Explore</span>
                                             <svg className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                             </svg>
-                                        </button>
+                                        </Link>
                                     </div>
 
                                     {/* Shine effect */}
