@@ -1,6 +1,7 @@
 'use client'
 
-import { Briefcase, Clapperboard, FileText, Laptop, Link, Megaphone, Palette } from 'lucide-react';
+import { Briefcase, Clapperboard, FileText, Laptop, Megaphone, Palette } from 'lucide-react';
+import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react';
 
 const PopularServices = () => {
