@@ -320,7 +320,7 @@ const Verification = () => {
                                 ) : (
                                     <>
                                         <div>
-                                            <Label htmlFor="companyName">Company/Organization Name *</Label>
+                                            <Label htmlFor="companyName" className='mb-2'>Company/Organization Name *</Label>
                                             <Input
                                                 id="companyName"
                                                 name="companyName"
@@ -333,7 +333,7 @@ const Verification = () => {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="companyWebsite">Company Website</Label>
+                                            <Label htmlFor="companyWebsite" className='mb-2'>Company Website</Label>
                                             <div className="relative">
                                                 <ExternalLink className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                                                 <Input
@@ -348,7 +348,7 @@ const Verification = () => {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="jobCategories">Intended Job Categories *</Label>
+                                            <Label htmlFor="jobCategories" className='mb-2'>Intended Job Categories *</Label>
                                             <Input
                                                 id="jobCategories"
                                                 name="jobCategories"
@@ -362,7 +362,7 @@ const Verification = () => {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="companyDescription">Company Description *</Label>
+                                            <Label htmlFor="companyDescription" className='mb-2'>Company Description *</Label>
                                             <Textarea
                                                 id="companyDescription"
                                                 name="companyDescription"

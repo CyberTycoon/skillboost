@@ -68,7 +68,7 @@ const Dashboard = () => {
     },
     {
       title: user?.role === 'freelancer' ? 'Total Earnings' : 'Active Hires',
-      value: user?.role === 'freelancer' ? '$0' : '0',
+      value: user?.role === 'freelancer' ? '₦0' : '0',
       icon: user?.role === 'freelancer' ? Users : Users,
       color: 'text-green-600'
     },

@@ -82,12 +82,12 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">
-              <Button size="lg" className="bg-white text-green-500 hover:bg-gray-100 px-8 py-3">
+              <Button size="lg" className="cursor-pointer bg-white text-green-500 hover:bg-gray-100 px-8 py-3">
                 Join as a Client
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="lg" variant="outline" className="border-white text-black hover:bg-white hover:text-green-500 px-8 py-3">
+              <Button size="lg" variant="outline" className="cursor-pointer border-white text-black hover:bg-white hover:text-green-500 px-8 py-3">
                 Become a Freelancer
               </Button>
             </Link>

@@ -70,7 +70,7 @@ const Explore = () => {
             id: 1,
             title: "Need a React developer for e-commerce website",
             client: "TechStart Inc.",
-            budget: "$1,000 - $2,500",
+            budget: "₦1,000 - ₦2,500",
             timeline: "2 weeks",
             description: "Looking for an experienced React developer to build a modern e-commerce platform...",
             category: "Programming & Tech",
@@ -82,7 +82,7 @@ const Explore = () => {
             id: 2,
             title: "Logo design for new startup",
             client: "GreenTech Solutions",
-            budget: "$200 - $500",
+            budget: "₦200 - ₦500",
             timeline: "1 week",
             description: "We need a creative logo designer to create a modern, clean logo for our environmental tech startup...",
             category: "Graphics & Design",
@@ -94,7 +94,7 @@ const Explore = () => {
             id: 3,
             title: "Content writer for blog articles",
             client: "Digital Marketing Pro",
-            budget: "$50 - $100",
+            budget: "₦50 - ₦100",
             timeline: "3 days",
             description: "Seeking a skilled content writer to create engaging blog posts about digital marketing trends...",
             category: "Writing & Translation",
@@ -136,7 +136,7 @@ const Explore = () => {
             {/* Header */}
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">Explore SkillBoost</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-6">Explore AfroTask</h1>
 
                     {/* Search and Filters */}
                     <div className="flex flex-col lg:flex-row gap-4 mb-6">
@@ -216,7 +216,7 @@ const Explore = () => {
                                                 <span>{service.delivery}</span>
                                             </div>
                                             <div className="text-lg font-bold text-gray-900">
-                                                ${service.price}
+                                                ₦{service.price}
                                             </div>
                                         </div>
                                     </CardContent>

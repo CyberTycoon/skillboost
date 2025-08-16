@@ -106,7 +106,7 @@ const SignUp = () => {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <Label htmlFor="name">Full Name</Label>
+                                <Label htmlFor="name" className='mb-2'>Full Name</Label>
                                 <Input
                                     id="name"
                                     name="name"
@@ -119,7 +119,7 @@ const SignUp = () => {
                             </div>
 
                             <div>
-                                <Label htmlFor="email">Email Address</Label>
+                                <Label htmlFor="email" className='mb-2'>Email Address</Label>
                                 <Input
                                     id="email"
                                     name="email"
@@ -132,7 +132,7 @@ const SignUp = () => {
                             </div>
 
                             <div>
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password" className='mb-2'>Password</Label>
                                 <Input
                                     id="password"
                                     name="password"
@@ -145,7 +145,7 @@ const SignUp = () => {
                             </div>
 
                             <div>
-                                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                <Label htmlFor="confirmPassword" className='mb-2'>Confirm Password</Label>
                                 <Input
                                     id="confirmPassword"
                                     name="confirmPassword"
