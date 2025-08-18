@@ -14,7 +14,7 @@ export default function Logo({ forceText = false, className }: LogoProps) {
             {/* Logo Icon */}
             <div className="relative w-12 h-12 flex items-center justify-center">
                 {/* Background with African-inspired geometric pattern */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-yellow-400 to-yellow-500 rounded-lg transform -rotate-6 shadow-md opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 to-amber-500 rounded-lg transform -rotate-6 shadow-md opacity-90" />
                 <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-lg transform rotate-6 shadow-lg" />
 
 
@@ -30,7 +30,7 @@ export default function Logo({ forceText = false, className }: LogoProps) {
 
                     {/* Users icon for freelancers */}
                     <Users
-                        className="w-4 h-4 text-yellow-600 absolute"
+                        className="w-4 h-4 text-amber-600 absolute"
                         strokeWidth={3}
                         style={{ transform: "translateY(1px)" }}
                     />
@@ -45,7 +45,7 @@ export default function Logo({ forceText = false, className }: LogoProps) {
                 )}
             >
                 <span className="font-bold text-2xl text-green-600 tracking-tight">
-                    Afro<span className="text-yellow-500">Task</span>
+                    Afro<span className="text-amber-500">Task</span>
                 </span>
                 <span className="text-xs text-gray-500 font-medium tracking-wide -mt-1">
                     Trust First Freelance

@@ -17,7 +17,7 @@ const SignUp = () => {
         confirmPassword: ''
     })
     const [errors, setErrors] = useState<Record<string, string>>({})
-    const { signIn } = useUser()
+    const { updateSignupPayload } = useUser()
     const router = useRouter()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,21 +68,18 @@ const SignUp = () => {
             return
         }
 
-        // Create user object
-        const userData = {
-            id: Date.now().toString(),
-            name: formData.name,
+        const [firstName, ...lastNameParts] = formData.name.split(' ');
+        const lastName = lastNameParts.join(' ');
+
+        const payload = {
+            first_name: firstName,
+            last_name: lastName,
             email: formData.email,
-            role: null, // Will be set in role selection
-            status: 'unverified', // unverified, pending, approved, rejected
-            avatar: null,
-            createdAt: new Date().toISOString()
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
         }
 
-        // Sign in the user
-        signIn(userData)
-
-        // Redirect to role selection
+        updateSignupPayload(payload)
         router.push('/choose-role')
     }
 
@@ -157,7 +154,7 @@ const SignUp = () => {
                                 {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
                             </div>
 
-                            <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
+                            <Button type="submit" className="cursor-pointer w-full bg-green-500 hover:bg-green-600">
                                 Create Account
                             </Button>
                         </form>

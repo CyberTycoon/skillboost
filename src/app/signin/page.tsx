@@ -16,6 +16,7 @@ const SignIn = () => {
         password: ''
     })
     const [errors, setErrors] = useState<Record<string, string>>({})
+    const [isLoading, setIsLoading] = useState(false)
     const { signIn } = useUser()
     const navigate = useRouter()
 
@@ -50,32 +51,46 @@ const SignIn = () => {
         return Object.keys(newErrors).length === 0
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (!validateForm()) {
             return
         }
 
-        // Mock authentication - in a real app, this would call an API
-        // For demo purposes, we'll create a mock user based on email
-        const userData = {
-            id: Date.now().toString(),
-            name: formData.email.split('@')[0],
-            email: formData.email,
-            role: 'freelancer', // Mock role
-            status: 'approved', // Mock approved status for demo
-            avatar: null,
-            skills: ['React', 'Node.js', 'JavaScript'],
-            portfolio: ['https://github.com/example'],
-            createdAt: new Date().toISOString()
+        setIsLoading(true)
+        setErrors({})
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+
+            const data = await res.json()
+
+            if (!res.ok) {
+                const apiErrors: Record<string, string> = {}
+                if (data.non_field_errors) {
+                    apiErrors.form = data.non_field_errors[0]
+                } else {
+                    apiErrors.form = data.message || 'An unknown error occurred.'
+                }
+                setErrors(apiErrors)
+                return
+            }
+
+            signIn(data)
+            navigate.push('/dashboard')
+        } catch (error) {
+            console.error('Failed to sign in', error)
+            setErrors({ form: 'An unexpected error occurred. Please try again.' })
+        } finally {
+            setIsLoading(false)
         }
-
-        // Sign in the user
-        signIn(userData)
-
-        // Redirect to dashboard
-        navigate.push('/dashboard')
     }
 
     return (
@@ -144,8 +159,9 @@ const SignIn = () => {
                                 </div>
                             </div>
 
-                            <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
-                                Sign In
+                            {errors.form && <p className="text-red-500 text-sm mb-4 text-center">{errors.form}</p>}
+                            <Button type="submit" className="w-full bg-green-500 hover:bg-green-600" disabled={isLoading}>
+                                {isLoading ? 'Signing In...' : 'Sign In'}
                             </Button>
                         </form>
 

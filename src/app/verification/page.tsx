@@ -11,21 +11,21 @@ import { Badge } from '@/components/ui/badge'
 import { useUser } from '../contexts/UserContext'
 
 const Verification = () => {
-    const { user, updateUser } = useUser()
+    const { signupPayload, signIn, user } = useUser()
     const router = useRouter()
     const [formData, setFormData] = useState({
         // Freelancer fields
-        skills: user?.skills?.join(', ') || '',
-        githubProfile: user?.githubProfile || '',
-        portfolioLinks: user?.portfolioLinks?.join('\n') || '',
-        experience: user?.experience || '',
+        skills: '',
+        github_profile: '',
+        portfolio_links: '',
+        experience_description: '',
+        education: '',
 
         // Client fields
-        companyName: user?.companyName || '',
-        companyWebsite: user?.companyWebsite || '',
-        jobCategories: user?.jobCategories?.join(', ') || '',
-        companyDescription: user?.companyDescription || ''
+        company_name: '',
+        location: ''
     })
+    const [isLoading, setIsLoading] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -49,8 +49,8 @@ const Verification = () => {
             newErrors.skills = 'Skills are required'
         }
 
-        if (!formData.experience.trim()) {
-            newErrors.experience = 'Experience description is required'
+        if (!formData.experience_description.trim()) {
+            newErrors.experience_description = 'Experience description is required'
         }
 
         setErrors(newErrors)
@@ -60,51 +60,74 @@ const Verification = () => {
     const validateClientForm = () => {
         const newErrors: Record<string, string> = {}
 
-        if (!formData.companyName.trim()) {
-            newErrors.companyName = 'Company name is required'
+        if (!formData.company_name.trim()) {
+            newErrors.company_name = 'Company name is required'
         }
 
-        if (!formData.jobCategories.trim()) {
-            newErrors.jobCategories = 'Job categories are required'
-        }
-
-        if (!formData.companyDescription.trim()) {
-            newErrors.companyDescription = 'Company description is required'
+        if (!formData.location.trim()) {
+            newErrors.location = 'Location is required'
         }
 
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        const isValid = user?.role === 'freelancer'
+        const isValid = signupPayload?.role === 'freelancer'
             ? validateFreelancerForm()
             : validateClientForm()
 
         if (!isValid) return
 
-        // Update user with verification data and set status to pending
-        const updates: any = {
-            status: 'pending',
-            verificationSubmittedAt: new Date().toISOString()
-        }
+        setIsLoading(true)
+        setErrors({})
 
-        if (user?.role === 'freelancer') {
-            updates.skills = formData.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
-            updates.githubProfile = formData.githubProfile
-            updates.portfolioLinks = formData.portfolioLinks.split('\n').map((s: string) => s.trim()).filter(Boolean)
-            updates.experience = formData.experience
+        const { role, ...restOfPayload } = signupPayload || {};
+        let finalPayload = { ...restOfPayload };
+
+        if (role === 'freelancer') {
+            finalPayload = {
+                ...finalPayload,
+                skills: formData.skills.split(',').map((s: string) => s.trim()).filter(Boolean),
+                github_profile: formData.github_profile,
+                portfolio_links: formData.portfolio_links.split('\n').map((s: string) => s.trim()).filter(Boolean),
+                experience_description: formData.experience_description,
+                education: formData.education,
+            }
         } else {
-            updates.companyName = formData.companyName
-            updates.companyWebsite = formData.companyWebsite
-            updates.jobCategories = formData.jobCategories.split(',').map((s: string) => s.trim()).filter(Boolean)
-            updates.companyDescription = formData.companyDescription
+            finalPayload = {
+                ...finalPayload,
+                company_name: formData.company_name,
+                location: formData.location,
+            }
         }
 
-        updateUser(updates)
-        router.push('/dashboard')
+        const endpoint = role === 'freelancer' ? '/api/freelancer-signup' : '/api/client-signup';
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(finalPayload),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setErrors(data);
+                return;
+            }
+
+            signIn(data);
+            router.push('/signin');
+        } catch (error) {
+            console.error('Verification submission failed', error);
+            setErrors({ form: 'An unexpected error occurred. Please try again.' });
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const getStatusIcon = () => {
@@ -186,7 +209,7 @@ const Verification = () => {
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mx-auto">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-4">Account Verification</h1>
+                    <h1 className="text-3xl font-bold text-green-500 mb-4">Account <span className="text-amber-400">Verification</span></h1>
                     <div className="flex items-center justify-center space-x-2 mb-4">
                         {getStatusIcon()}
                         <Badge className={getStatusColor()}>
@@ -251,7 +274,7 @@ const Verification = () => {
                     <Card>
                         <CardHeader>
                             <CardTitle>
-                                {user?.role === 'freelancer' ? 'Freelancer' : 'Client'} Verification
+                                {signupPayload?.role === 'freelancer' ? 'Freelancer' : 'Client'} Verification
                             </CardTitle>
                             <CardDescription>
                                 Please provide the following information to verify your account
@@ -259,7 +282,7 @@ const Verification = () => {
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                {user?.role === 'freelancer' ? (
+                                {signupPayload?.role === 'freelancer' ? (
                                     <>
                                         <div>
                                             <Label htmlFor="skills">Skills *</Label>
@@ -269,20 +292,20 @@ const Verification = () => {
                                                 value={formData.skills}
                                                 onChange={handleChange}
                                                 placeholder="e.g., React, Node.js, Python, Design"
-                                                className={errors.skills ? 'border-red-500' : ''}
+                                                className={`${errors.skills ? 'border-red-500' : ''} mt-2`}
                                             />
                                             <p className="text-sm text-gray-500 mt-1">Separate skills with commas</p>
                                             {errors.skills && <p className="text-red-500 text-sm mt-1">{errors.skills}</p>}
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="githubProfile">GitHub Profile</Label>
-                                            <div className="relative">
+                                            <Label htmlFor="github_profile">GitHub Profile</Label>
+                                            <div className="relative mt-2">
                                                 <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                                                 <Input
-                                                    id="githubProfile"
-                                                    name="githubProfile"
-                                                    value={formData.githubProfile}
+                                                    id="github_profile"
+                                                    name="github_profile"
+                                                    value={formData.github_profile}
                                                     onChange={handleChange}
                                                     placeholder="https://github.com/yourusername"
                                                     className="pl-10"
@@ -291,91 +314,75 @@ const Verification = () => {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="portfolioLinks">Portfolio Links</Label>
+                                            <Label htmlFor="portfolio_links">Portfolio Links</Label>
                                             <Textarea
-                                                id="portfolioLinks"
-                                                name="portfolioLinks"
-                                                value={formData.portfolioLinks}
+                                                id="portfolio_links"
+                                                name="portfolio_links"
+                                                value={formData.portfolio_links}
                                                 onChange={handleChange}
                                                 placeholder="https://yourportfolio.com&#10;https://dribbble.com/yourusername&#10;https://behance.net/yourusername"
                                                 rows={4}
+                                                className='mt-2'
                                             />
                                             <p className="text-sm text-gray-500 mt-1">One link per line</p>
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="experience">Experience Description *</Label>
+                                            <Label htmlFor="experience_description">Experience Description *</Label>
                                             <Textarea
-                                                id="experience"
-                                                name="experience"
-                                                value={formData.experience}
+                                                id="experience_description"
+                                                name="experience_description"
+                                                value={formData.experience_description}
                                                 onChange={handleChange}
                                                 placeholder="Describe your professional experience, notable projects, and expertise..."
                                                 rows={4}
-                                                className={errors.experience ? 'border-red-500' : ''}
+                                                className={`${errors.experience_description ? 'border-red-500' : ''} mt-2`}
                                             />
-                                            {errors.experience && <p className="text-red-500 text-sm mt-1">{errors.experience}</p>}
+                                            {errors.experience_description && <p className="text-red-500 text-sm mt-1">{errors.experience_description}</p>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="education">Education</Label>
+                                            <Input
+                                                id="education"
+                                                name="education"
+                                                value={formData.education}
+                                                onChange={handleChange}
+                                                placeholder="e.g., B.Sc. in Computer Science"
+                                                className="mt-2"
+                                            />
                                         </div>
                                     </>
                                 ) : (
                                     <>
                                         <div>
-                                            <Label htmlFor="companyName" className='mb-2'>Company/Organization Name *</Label>
+                                            <Label htmlFor="company_name" className='mb-2'>Company/Organization Name *</Label>
                                             <Input
-                                                id="companyName"
-                                                name="companyName"
-                                                value={formData.companyName}
+                                                id="company_name"
+                                                name="company_name"
+                                                value={formData.company_name}
                                                 onChange={handleChange}
                                                 placeholder="Your company or organization name"
-                                                className={errors.companyName ? 'border-red-500' : ''}
+                                                className={`${errors.company_name ? 'border-red-500' : ''} mt-2`}
                                             />
-                                            {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
+                                            {errors.company_name && <p className="text-red-500 text-sm mt-1">{errors.company_name}</p>}
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="companyWebsite" className='mb-2'>Company Website</Label>
-                                            <div className="relative">
-                                                <ExternalLink className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                                <Input
-                                                    id="companyWebsite"
-                                                    name="companyWebsite"
-                                                    value={formData.companyWebsite}
-                                                    onChange={handleChange}
-                                                    placeholder="https://yourcompany.com"
-                                                    className="pl-10"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <Label htmlFor="jobCategories" className='mb-2'>Intended Job Categories *</Label>
+                                            <Label htmlFor="location" className='mb-2'>Location *</Label>
                                             <Input
-                                                id="jobCategories"
-                                                name="jobCategories"
-                                                value={formData.jobCategories}
+                                                id="location"
+                                                name="location"
+                                                value={formData.location}
                                                 onChange={handleChange}
-                                                placeholder="e.g., Web Development, Design, Marketing"
-                                                className={errors.jobCategories ? 'border-red-500' : ''}
+                                                placeholder="e.g., New York, USA"
+                                                className={`${errors.location ? 'border-red-500' : ''} mt-2`}
                                             />
-                                            <p className="text-sm text-gray-500 mt-1">Separate categories with commas</p>
-                                            {errors.jobCategories && <p className="text-red-500 text-sm mt-1">{errors.jobCategories}</p>}
-                                        </div>
-
-                                        <div>
-                                            <Label htmlFor="companyDescription" className='mb-2'>Company Description *</Label>
-                                            <Textarea
-                                                id="companyDescription"
-                                                name="companyDescription"
-                                                value={formData.companyDescription}
-                                                onChange={handleChange}
-                                                placeholder="Describe your company, industry, and the types of projects you typically work on..."
-                                                rows={4}
-                                                className={errors.companyDescription ? 'border-red-500' : ''}
-                                            />
-                                            {errors.companyDescription && <p className="text-red-500 text-sm mt-1">{errors.companyDescription}</p>}
+                                            {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
                                         </div>
                                     </>
                                 )}
+
+                                {errors.form && <p className="text-red-500 text-sm mb-4 text-center">{errors.form}</p>}
 
                                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                                     <h4 className="font-medium text-blue-900 mb-2">Verification Process</h4>
@@ -385,8 +392,8 @@ const Verification = () => {
                                     </p>
                                 </div>
 
-                                <Button type="submit" className="w-full bg-green-500 hover:bg-green-600">
-                                    Submit for Verification
+                                <Button type="submit" className="w-full bg-green-500 hover:bg-green-600" disabled={isLoading}>
+                                    {isLoading ? 'Submitting...' : 'Submit for Verification'}
                                 </Button>
                             </form>
                         </CardContent>
