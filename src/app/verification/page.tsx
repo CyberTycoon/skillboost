@@ -11,8 +11,9 @@ import { Badge } from '@/components/ui/badge'
 import { useUser } from '../contexts/UserContext'
 
 const Verification = () => {
-    const { signupPayload, signIn, user } = useUser()
+    const { signupPayload, updateSignupPayload, signIn } = useUser()
     const router = useRouter()
+    const [submissionComplete, setSubmissionComplete] = useState(false)
     const [formData, setFormData] = useState({
         // Freelancer fields
         skills: '',
@@ -120,8 +121,10 @@ const Verification = () => {
                 return;
             }
 
-            signIn(data);
-            router.push('/signin');
+            // Clear the payload from context/localStorage
+            updateSignupPayload(null);
+            setSubmissionComplete(true);
+
         } catch (error) {
             console.error('Verification submission failed', error);
             setErrors({ form: 'An unexpected error occurred. Please try again.' });
@@ -130,98 +133,17 @@ const Verification = () => {
         }
     }
 
-    const getStatusIcon = () => {
-        switch (user?.status) {
-            case 'approved':
-                return <CheckCircle className="w-5 h-5 text-green-500" />
-            case 'pending':
-                return <Clock className="w-5 h-5 text-orange-500" />
-            case 'rejected':
-                return <AlertCircle className="w-5 h-5 text-red-500" />
-            default:
-                return <AlertCircle className="w-5 h-5 text-gray-500" />
-        }
-    }
-
-    const getStatusText = () => {
-        switch (user?.status) {
-            case 'approved':
-                return 'Verified'
-            case 'pending':
-                return 'Under Review'
-            case 'rejected':
-                return 'Verification Failed'
-            default:
-                return 'Not Verified'
-        }
-    }
-
-    const getStatusColor = () => {
-        switch (user?.status) {
-            case 'approved':
-                return 'bg-green-100 text-green-800'
-            case 'pending':
-                return 'bg-orange-100 text-orange-800'
-            case 'rejected':
-                return 'bg-red-100 text-red-800'
-            default:
-                return 'bg-gray-100 text-gray-800'
-        }
-    }
-
-    if (user?.status === 'approved') {
-        return (
-            <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-2xl mx-auto">
-                    <Card>
-                        <CardHeader className="text-center">
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle className="w-8 h-8 text-green-500" />
-                            </div>
-                            <CardTitle className="text-2xl text-green-600">Verification Complete!</CardTitle>
-                            <CardDescription>
-                                Your account has been successfully verified and approved.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="text-center">
-                            <p className="text-gray-600 mb-6">
-                                You now have full access to all TrustWork features. Start {user?.role === 'freelancer' ? 'offering your services' : 'posting jobs'} today!
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Button onClick={() => router.push('/dashboard')} className="bg-green-500 hover:bg-green-600">
-                                    Go to Dashboard
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => router.push(user?.role === 'freelancer' ? '/offer-service' : '/post-job')}
-                                >
-                                    {user?.role === 'freelancer' ? 'Offer a Service' : 'Post a Job'}
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-        )
-    }
-
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mx-auto">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-green-500 mb-4">Account <span className="text-amber-400">Verification</span></h1>
-                    <div className="flex items-center justify-center space-x-2 mb-4">
-                        {getStatusIcon()}
-                        <Badge className={getStatusColor()}>
-                            {getStatusText()}
-                        </Badge>
-                    </div>
                     <p className="text-gray-600">
                         Complete your verification to access all TrustWork features
                     </p>
                 </div>
 
-                {user?.status === 'pending' ? (
+                {submissionComplete ? (
                     <Card>
                         <CardHeader className="text-center">
                             <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -229,7 +151,7 @@ const Verification = () => {
                             </div>
                             <CardTitle className="text-xl text-orange-600">Verification Under Review</CardTitle>
                             <CardDescription>
-                                Your verification request is being processed by our team.
+                                Your verification request has been submitted and is being processed by our team.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -237,35 +159,12 @@ const Verification = () => {
                                 <p className="text-orange-700 text-sm">
                                     <strong>What happens next?</strong><br />
                                     Our verification team will review your information within 24-48 hours.
-                                    You'll receive an email notification once the review is complete.
+                                    You'll receive an email notification once the review is complete. You can now sign in to your account.
                                 </p>
                             </div>
-
-                            <div className="space-y-4">
-                                <h4 className="font-medium text-gray-900">While you wait, you can:</h4>
-                                <ul className="text-sm text-gray-600 space-y-2">
-                                    <li className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                                        Browse available {user?.role === 'freelancer' ? 'jobs' : 'services'}
-                                    </li>
-                                    <li className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                                        Explore different categories
-                                    </li>
-                                    <li className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                                        Complete your profile
-                                    </li>
-                                    <li className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                                        Read our community guidelines
-                                    </li>
-                                </ul>
-                            </div>
-
                             <div className="mt-6 text-center">
-                                <Button onClick={() => router.push('/dashboard')} variant="outline">
-                                    Go to Dashboard
+                                <Button onClick={() => router.push('/signin')} className="cursor-pointer bg-green-500 hover:bg-green-600">
+                                    Go to Sign In
                                 </Button>
                             </div>
                         </CardContent>

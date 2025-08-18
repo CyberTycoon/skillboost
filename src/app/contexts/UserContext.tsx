@@ -15,9 +15,8 @@ interface UserContextType {
     isAuthenticated: boolean;
     signIn: (userData: any) => void;
     signOut: () => void;
-    updateUser: (updates: Partial<User>) => void;
     signupPayload: Partial<any> | null;
-    updateSignupPayload: (payload: Partial<any>) => void;
+    updateSignupPayload: (payload: Partial<any> | null) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -67,18 +66,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem('trustwork_token');
     };
 
-    const updateUser = (updates: Partial<User>) => {
-        if (user) {
-            const updatedUser = { ...user, ...updates }
-            setUser(updatedUser)
-            localStorage.setItem('trustwork_user', JSON.stringify(updatedUser))
+    const updateSignupPayload = (payload: Partial<any> | null) => {
+        if (payload) {
+            const newPayload = { ...signupPayload, ...payload };
+            setSignupPayload(newPayload);
+            localStorage.setItem('trustwork_signup_payload', JSON.stringify(newPayload));
+        } else {
+            setSignupPayload(null);
+            localStorage.removeItem('trustwork_signup_payload');
         }
-    }
-
-    const updateSignupPayload = (payload: Partial<any>) => {
-        const newPayload = { ...signupPayload, ...payload };
-        setSignupPayload(newPayload);
-        localStorage.setItem('trustwork_signup_payload', JSON.stringify(newPayload));
     };
 
     const value = {
@@ -86,7 +82,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         isAuthenticated,
         signIn,
         signOut,
-        updateUser,
         signupPayload,
         updateSignupPayload
     }
