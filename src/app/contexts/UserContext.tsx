@@ -34,14 +34,35 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [signupPayload, setSignupPayload] = useState<Partial<any> | null>(null)
 
+    const fetchUserProfile = async () => {
+        const token = localStorage.getItem('trustwork_token');
+        if (token) {
+            try {
+                const res = await fetch('/api/profile', {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const userData = { ...data.user, ...data.profile };
+                    setUser(userData);
+                    setIsAuthenticated(true);
+                    localStorage.setItem('trustwork_user', JSON.stringify(userData));
+                } else {
+                    // Token might be invalid, so sign out
+                    signOut();
+                }
+            } catch (error) {
+                console.error('Failed to fetch user profile', error);
+                signOut();
+            }
+        }
+    };
+
     // Load user and signupPayload from localStorage on mount
     useEffect(() => {
-        const savedUser = localStorage.getItem('trustwork_user')
-        if (savedUser) {
-            const userData = JSON.parse(savedUser)
-            setUser(userData)
-            setIsAuthenticated(true)
-        }
+        fetchUserProfile();
         const savedPayload = localStorage.getItem('trustwork_signup_payload');
         if (savedPayload) {
             setSignupPayload(JSON.parse(savedPayload));

@@ -12,46 +12,37 @@ const Dashboard = () => {
   const { showRestrictedModal } = useUI()
 
   const getStatusIcon = () => {
-    switch (user?.status) {
-      case 'approved':
-        return <CheckCircle className="w-5 h-5 text-green-500" />
-      case 'pending':
-        return <Clock className="w-5 h-5 text-orange-500" />
-      case 'rejected':
-        return <AlertCircle className="w-5 h-5 text-red-500" />
-      default:
-        return <AlertCircle className="w-5 h-5 text-gray-500" />
+    if (user?.is_verified) {
+      return <CheckCircle className="w-5 h-5 text-green-500" />;
     }
+    if (user?.is_pending_review) {
+      return <Clock className="w-5 h-5 text-orange-500" />;
+    }
+    return <AlertCircle className="w-5 h-5 text-gray-500" />;
   }
 
   const getStatusText = () => {
-    switch (user?.status) {
-      case 'approved':
-        return 'Verified'
-      case 'pending':
-        return 'Under Review'
-      case 'rejected':
-        return 'Verification Failed'
-      default:
-        return 'Not Verified'
+    if (user?.is_verified) {
+      return 'Verified';
     }
+    if (user?.is_pending_review) {
+      return 'Under Review';
+    }
+    return 'Not Verified';
   }
 
   const getStatusColor = () => {
-    switch (user?.status) {
-      case 'approved':
-        return 'bg-green-100 text-green-800'
-      case 'pending':
-        return 'bg-orange-100 text-orange-800'
-      case 'rejected':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
+    if (user?.is_verified) {
+      return 'bg-green-100 text-green-800';
     }
+    if (user?.is_pending_review) {
+      return 'bg-orange-100 text-orange-800';
+    }
+    return 'bg-gray-100 text-gray-800';
   }
 
   const handleRestrictedAction = (action) => {
-    if (user?.status !== 'approved') {
+    if (!user?.is_verified) {
       showRestrictedModal(action)
       return
     }
@@ -61,15 +52,15 @@ const Dashboard = () => {
 
   const stats = [
     {
-      title: user?.role === 'freelancer' ? 'Active Services' : 'Posted Jobs',
+      title: user?.user_type === 'freelancer' ? 'Active Services' : 'Posted Jobs',
       value: '0',
-      icon: user?.role === 'freelancer' ? Briefcase : Plus,
+      icon: user?.user_type === 'freelancer' ? Briefcase : Plus,
       color: 'text-blue-600'
     },
     {
-      title: user?.role === 'freelancer' ? 'Total Earnings' : 'Active Hires',
-      value: user?.role === 'freelancer' ? '₦0' : '0',
-      icon: user?.role === 'freelancer' ? Users : Users,
+      title: user?.user_type === 'freelancer' ? 'Total Earnings' : 'Active Hires',
+      value: user?.user_type === 'freelancer' ? '₦0' : '0',
+      icon: user?.user_type === 'freelancer' ? Users : Users,
       color: 'text-green-600'
     },
     {
@@ -86,10 +77,10 @@ const Dashboard = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user?.name}!
+            Welcome back, {user?.first_name}!
           </h1>
           <p className="text-gray-600 mt-2">
-            Manage your {user?.role === 'freelancer' ? 'services and projects' : 'job postings and hires'}
+            Manage your {user?.user_type === 'freelancer' ? 'services and projects' : 'job postings and hires'}
           </p>
         </div>
 
@@ -112,13 +103,13 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {user?.status === 'approved' ? (
+            {user?.is_verified ? (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <p className="text-green-700">
                   🎉 Your account is verified! You have full access to all TrustWork features.
                 </p>
               </div>
-            ) : user?.status === 'pending' ? (
+            ) : user?.is_pending_review ? (
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                 <p className="text-orange-700">
                   ⏳ Your verification is under review. We'll notify you once it's complete.
@@ -165,13 +156,13 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
               <CardDescription>
-                Get started with your {user?.role === 'freelancer' ? 'freelancing' : 'hiring'} journey
+                Get started with your {user?.user_type === 'freelancer' ? 'freelancing' : 'hiring'} journey
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {user?.role === 'freelancer' ? (
+              {user?.user_type === 'freelancer' ? (
                 <>
-                  {user?.status === 'approved' ? (
+                  {user?.is_verified ? (
                     <Link href="/offer-service">
                       <Button className="w-full justify-start bg-green-500 hover:bg-green-600">
                         <Plus className="w-4 h-4 mr-2" />
@@ -196,7 +187,7 @@ const Dashboard = () => {
                 </>
               ) : (
                 <>
-                  {user?.status === 'approved' ? (
+                  {user?.is_verified ? (
                     <Link href="/post-job">
                       <Button className="w-full justify-start bg-green-500 hover:bg-green-600">
                         <Plus className="w-4 h-4 mr-2" />
@@ -237,26 +228,26 @@ const Dashboard = () => {
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-gray-600">Account created</span>
                   <span className="text-gray-400 ml-auto">
-                    {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Today'}
+                    {user?.date_joined ? new Date(user.date_joined).toLocaleDateString() : 'Today'}
                   </span>
                 </div>
-                {user?.role && (
+                {user?.user_type && (
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     <span className="text-gray-600">
-                      Selected role: {user.role === 'freelancer' ? 'Freelancer' : 'Client'}
+                      Selected role: {user.user_type === 'freelancer' ? 'Freelancer' : 'Client'}
                     </span>
                     <span className="text-gray-400 ml-auto">Today</span>
                   </div>
                 )}
-                {user?.status === 'pending' && (
+                {user?.is_pending_review && (
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                     <span className="text-gray-600">Verification submitted</span>
                     <span className="text-gray-400 ml-auto">Today</span>
                   </div>
                 )}
-                {user?.status === 'approved' && (
+                {user?.is_verified && (
                   <div className="flex items-center space-x-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-gray-600">Account verified</span>

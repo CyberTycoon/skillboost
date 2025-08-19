@@ -83,9 +83,11 @@ const Navbar = () => {
                                 <DropdownMenuItem className='cursor-pointer' onClick={() => navigate.push('/dashboard')}>
                                     Dashboard
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className='cursor-pointer' onClick={() => navigate.push('/verification')}>
-                                    Verification
-                                </DropdownMenuItem>
+                                {(!user?.is_verified && !user?.is_pending_review) && (
+                                    <DropdownMenuItem className='cursor-pointer' onClick={() => navigate.push('/verification')}>
+                                        Verification
+                                    </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem className='cursor-pointer' onClick={handleSignOut}>
                                     <LogOut className="w-4 h-4 mr-2" />
                                     Sign Out
@@ -141,20 +143,33 @@ const Navbar = () => {
                             </Link>
                         </>
                     ) : (
-                        <>
+                        <div className="flex flex-col space-y-4">
+                            <div className="flex items-center space-x-3 px-2 py-2 rounded-md bg-gray-100">
+                                <User className="w-5 h-5 text-gray-600" />
+                                <span className="font-medium text-gray-800">{user?.first_name || 'User'}</span>
+                            </div>
                             <Link
                                 href="/dashboard"
-                                className="text-gray-600 hover:text-green-500 transition-colors text-lg"
+                                className="text-gray-600 hover:text-green-500 transition-colors text-lg pl-4"
                             >
                                 Dashboard
                             </Link>
+                            {(!user?.is_verified && !user?.is_pending_review) && (
+                                <Link
+                                    href="/verification"
+                                    className="text-gray-600 hover:text-green-500 transition-colors text-lg pl-4"
+                                >
+                                    Verification
+                                </Link>
+                            )}
                             <button
                                 onClick={handleSignOut}
-                                className="text-red-500 hover:text-red-600 transition-colors text-lg text-left"
+                                className="flex items-center text-red-500 hover:text-red-600 transition-colors text-lg pl-4 text-left"
                             >
+                                <LogOut className="w-5 h-5 mr-2" />
                                 Sign Out
                             </button>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>
