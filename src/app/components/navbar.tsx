@@ -76,7 +76,7 @@ const Navbar = () => {
                                     className="flex items-center space-x-2 cursor-pointer"
                                 >
                                     <User className="w-4 h-4" />
-                                    <span>{user?.name || 'User'}</span>
+                                    <span>{user?.first_name || 'User'}</span>
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -125,18 +125,37 @@ const Navbar = () => {
                     >
                         Explore
                     </Link>
-                    <Link
-                        href="/signin"
-                        className="text-gray-600 hover:text-green-500 transition-colors text-lg"
-                    >
-                        Sign In
-                    </Link>
-                    <Link
-                        href="/signup"
-                        className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors shadow-md text-center text-lg"
-                    >
-                        Join
-                    </Link>
+                    {!isAuthenticated ? (
+                        <>
+                            <Link
+                                href="/signin"
+                                className="text-gray-600 hover:text-green-500 transition-colors text-lg"
+                            >
+                                Sign In
+                            </Link>
+                            <Link
+                                href="/signup"
+                                className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors shadow-md text-center text-lg"
+                            >
+                                Join
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                href="/dashboard"
+                                className="text-gray-600 hover:text-green-500 transition-colors text-lg"
+                            >
+                                Dashboard
+                            </Link>
+                            <button
+                                onClick={handleSignOut}
+                                className="text-red-500 hover:text-red-600 transition-colors text-lg text-left"
+                            >
+                                Sign Out
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

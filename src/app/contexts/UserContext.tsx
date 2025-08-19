@@ -59,7 +59,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setSignupPayload(null);
     };
 
-    const signOut = () => {
+    const signOut = async () => {
+        const token = localStorage.getItem('trustwork_token');
+        if (token) {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+            } catch (error) {
+                console.error('Failed to logout from backend', error);
+            }
+        }
         setUser(null);
         setIsAuthenticated(false);
         localStorage.removeItem('trustwork_user');

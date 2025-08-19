@@ -3,12 +3,14 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useUser } from '../contexts/UserContext'
 import Logo from '../components/logo'
+import toast from 'react-hot-toast';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -17,6 +19,7 @@ const SignIn = () => {
     })
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
     const { signIn } = useUser()
     const navigate = useRouter()
 
@@ -62,6 +65,7 @@ const SignIn = () => {
         setErrors({})
 
         try {
+            console.log('Attempting to sign in with:', formData);
             const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -71,23 +75,34 @@ const SignIn = () => {
             })
 
             const data = await res.json()
+            console.log('Received response from /api/login:', data);
 
             if (!res.ok) {
-                const apiErrors: Record<string, string> = {}
+                const newErrors: Record<string, string> = {};
                 if (data.non_field_errors) {
-                    apiErrors.form = data.non_field_errors[0]
+                    toast.error(data.non_field_errors.join(' '));
+                } else if (data.detail) {
+                    toast.error(data.detail);
+                } else if (typeof data === 'object' && data !== null) {
+                    Object.keys(data).forEach(key => {
+                        const errorMessage = Array.isArray(data[key]) ? data[key].join(' ') : String(data[key]);
+                        newErrors[key] = errorMessage;
+                        const fieldName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        toast.error(`${fieldName}: ${errorMessage}`);
+                    });
                 } else {
-                    apiErrors.form = data.message || 'An unknown error occurred.'
+                    toast.error('An unexpected error occurred.');
                 }
-                setErrors(apiErrors)
-                return
+                setErrors(newErrors);
+                return;
             }
 
             signIn(data)
+            console.log('Sign-in successful, navigating to dashboard.');
             navigate.push('/dashboard')
         } catch (error) {
             console.error('Failed to sign in', error)
-            setErrors({ form: 'An unexpected error occurred. Please try again.' })
+            toast.error('An unexpected error occurred. Please try again.')
         } finally {
             setIsLoading(false)
         }
@@ -128,14 +143,23 @@ const SignIn = () => {
 
                             <div>
                                 <Label htmlFor="password" className='mb-2'>Password</Label>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className={errors.password ? 'border-red-500' : ''}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                                    >
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </button>
+                                </div>
                                 {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                             </div>
 
@@ -159,7 +183,6 @@ const SignIn = () => {
                                 </div>
                             </div>
 
-                            {errors.form && <p className="text-red-500 text-sm mb-4 text-center">{errors.form}</p>}
                             <Button type="submit" className="w-full bg-green-500 hover:bg-green-600" disabled={isLoading}>
                                 {isLoading ? 'Signing In...' : 'Sign In'}
                             </Button>

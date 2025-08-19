@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useUser } from '../contexts/UserContext'
+import toast from 'react-hot-toast';
 
 const Verification = () => {
     const { signupPayload, updateSignupPayload, signIn } = useUser()
@@ -117,7 +118,18 @@ const Verification = () => {
             const data = await res.json();
 
             if (!res.ok) {
-                setErrors(data);
+                const newErrors: Record<string, string> = {};
+                if (typeof data === 'object' && data !== null) {
+                    Object.keys(data).forEach(key => {
+                        const errorMessage = Array.isArray(data[key]) ? data[key].join(' ') : String(data[key]);
+                        newErrors[key] = errorMessage;
+                        const fieldName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        toast.error(`${fieldName}: ${errorMessage}`);
+                    });
+                } else {
+                    toast.error('An unexpected error occurred.');
+                }
+                setErrors(newErrors);
                 return;
             }
 
@@ -127,7 +139,7 @@ const Verification = () => {
 
         } catch (error) {
             console.error('Verification submission failed', error);
-            setErrors({ form: 'An unexpected error occurred. Please try again.' });
+            toast.error('An unexpected error occurred. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -139,7 +151,7 @@ const Verification = () => {
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-green-500 mb-4">Account <span className="text-amber-400">Verification</span></h1>
                     <p className="text-gray-600">
-                        Complete your verification to access all TrustWork features
+                        Complete your verification to access all AfroTask features
                     </p>
                 </div>
 
